@@ -712,7 +712,7 @@ var findLongestChain = function(pairs) {
 
 #### 动态规划:
 
-以 $dp[i][0]$ 表示以 ith num 结尾且尾状态是上升的最长摆动子序列
+以 $dp[i][0]$ 表示以 ith num 结尾且尾状态是上升的最长摆动子序列, $dp[i][1]$表示尾状态下降.
 
 ~~~
 var wiggleMaxLength = function(nums) {
@@ -734,6 +734,51 @@ var wiggleMaxLength = function(nums) {
         max = Math.max(max, ...dp[dp.length-1]);
     }
     return max 
+};
+~~~
+
+
+
+#### 贪心
+
+当序列有一段连续递增或递减的子串, 为形成摆动子序列, 只需要保存这段连续递增子串的峰值(谷值), 以为后面的元素留下更大的空间, 使其更容易形成摆动.
+
+~~~
+var wiggleMaxLength = function(nums) {
+    if(!nums || nums.length === 0){
+        return 0
+    }
+    let up = 1;
+    let down = -1;
+    let begin = 0;
+    let state = begin;
+    let length = 1;
+    for(let i = 1; i < nums.length; i++){
+        switch(state){
+            case begin:
+                if(nums[i-1] > nums[i]){
+                    state = up
+                    length += 1
+                }else if(nums[i-1] < nums[i]){
+                    state = down 
+                    length +=1
+                }
+                break;
+            case up:
+                if(nums[i-1] < nums[i]){
+                    state = down 
+                    length += 1 
+                }
+                break;
+            case down:
+                if(nums[i-1] > nums[i]){
+                    state = up 
+                    length += 1 
+                }
+                break;
+        }
+    }
+    return length
 };
 ~~~
 
