@@ -782,3 +782,96 @@ var wiggleMaxLength = function(nums) {
 };
 ~~~
 
+
+
+## 最长公共子序列
+
+### 1. 最长公共子序列
+
+[力扣](https://leetcode-cn.com/problems/longest-common-subsequence/)
+
+#### 动态规划
+
+以 $dp[i][j]$ 表示 s1[0, i), s2[0, j) 的最长公共子序列
+$$
+dp[i][j] = \begin{cases}
+dp[i-1][j-1] + 1 \qquad & s[i] == s[j] \\
+max(dp[i-1][j], dp[i][j-1]) & s[i] != s[j]
+\end{cases}
+$$
+
+
+
+
+
+
+~~~javascript
+/**
+ * @param {string} text1
+ * @param {string} text2
+ * @return {number}
+ */
+var longestCommonSubsequence = function(text1, text2) {
+    if(!text1 || !text2){
+        return 0
+    }
+    let m = text1.length
+    let n = text2.length 
+    let dp = new Array(m+1)
+    for(let i = 0; i < m+1; i++){
+        dp[i] = new Array(n+1).fill(0)
+    }
+    for(let i = 1; i < m+1; i++){
+        for(let j = 1; j < n + 1; j++){
+            if(text1[i-1] === text2[j-1]){
+                dp[i][j] = dp[i-1][j-1] + 1
+            }else{
+                dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1])
+            }
+        }
+    }
+    return dp[m][n]
+};
+~~~
+
+
+
+### 最长公共子串
+
+$$
+dp[i][j] = dp[i-1][j-1] + 1 \qquad if \quad s[i] == s[j] \\
+ans = max(dp)
+$$
+
+
+
+## 0-1背包问题
+
+
+
+~~~
+function knapsack(W, N, weights, values) {
+  let dp = []
+  for (let i = 0; i < N + 1; i++) {
+    let tmp = new Array(W + 1).fill(0)
+    dp.push(tmp)
+  }
+
+  for (let i = 1; i < N + 1; i++) {
+    let w = weights[i - 1]
+    let v = values[i - 1]
+    for (let j = 1; j < W + 1; j++) {
+      if (j >= w) {
+        dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - w] + v)
+      } else {
+        dp[i][j] = dp[i - 1][j]
+      }
+    }
+  }
+  return dp[N][W]
+}
+
+knapsack(10, 5, [2, 4, 5, 3], [3, 4, 2, 5])
+console.log()
+~~~
+
