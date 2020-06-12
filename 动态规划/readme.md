@@ -845,8 +845,22 @@ $$
 
 
 
-## 0-1背包问题
+## 背包问题
 
+[背包九讲](https://www.kancloud.cn/kancloud/pack/70125)
+
+### 01 背包
+
+有一个容积为 W 的背包, 有 N 件物品, 每件物品有价值 v和体积 w, 求背包能装下的最大价值 v
+
+状态方程:
+
+$dp[i][j]$ 表示, 前 i 件物品, 不超过体积 j 的情况下, 能达到的最大价值.
+
+对第 i 件物品而言, 可添加也可不添加, 取决于什么情况下价值最大,
+$$
+dp[i][j] = max(dp[i-1][j], dp[i-1][j-w] + v)
+$$
 
 
 ~~~
@@ -874,4 +888,55 @@ function knapsack(W, N, weights, values) {
 knapsack(10, 5, [2, 4, 5, 3], [3, 4, 2, 5])
 console.log()
 ~~~
+
+空间优化:
+
+由于 $dp[i][j]$ 只依赖于 dp[i-1], 所以可以用 dp[i] 同时表示 dp[i], dp[i-1]
+
+==又== 由于,$dp[i][j]$ 依赖于$dp[i-1][j-w]$ 所以 j 要从大到小遍历
+
+
+
+### 416. 分割等和子集
+
+[leetcode](https://leetcode-cn.com/problems/partition-equal-subset-sum/)
+
+以 $dp[i][j]$ 表示前 i个数能不能合成 j值
+$$
+dp[i][j] = dp[i-1][j]\quad || \quad d[i-1][j-nums[i]]
+$$
+
+
+
+
+~~~
+var canPartition = function(nums) {
+    if(!nums || nums.length < 2){
+        return false;
+    }
+    let sum = nums.reduce((a,b) => a+b, 0)
+    if(sum % 2 == 1){
+        return false 
+    }
+    let halfSum = sum / 2
+    let dp = new Array(halfSum + 1).fill(false)
+    dp[0] = true 
+    for(let i = 0; i < nums.length; i++){
+        let w = nums[i]
+        for(let j = halfSum; j >= w; j--){
+            dp[j] = dp[j] || dp[j-w]
+        }
+        if(dp[halfSum]){
+            return true
+        }
+    }
+    return dp.pop()
+};
+~~~
+
+
+
+
+
+
 
