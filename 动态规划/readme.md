@@ -936,6 +936,26 @@ var canPartition = function(nums) {
 
 
 
+### 改变一组数的正负号使得它们的和为一给定数
+
+[力扣](https://leetcode-cn.com/problems/target-sum/description/)
+
+==技巧题==
+
+设取正号的一组为 P,取负号的一组为 N
+$$
+\begin{aligned}
+sum(P) - sum(N) &= target \\
+sum(P) + sum(N) + sum(P) - sum(N) &= target + sum\\
+2*sum(P) &= target + sum
+\end{aligned}
+$$
+问题化为 寻找和为(target + sum)/2 的一组数
+
+改 $dp[i][j]$ 表示为前 i 个数能组合成 j 的组合个数, 初始化 $dp[i][0]$ = 1
+$$
+dp[i][j] = dp[i][j] + dp[i][j-num]
+$$
 
 
 
