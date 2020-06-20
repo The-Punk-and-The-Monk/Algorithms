@@ -895,6 +895,8 @@ console.log()
 
 ==又== 由于,$dp[i][j]$ 依赖于$dp[i-1][j-w]$ 所以 j 要从大到小遍历
 
+而且对此题空间优化==刚好可以优化一点时间复杂度==, j 的结束条件是 j >= w, 对于小于 w 的部分自动继承了 dp[i-1]
+
 
 
 ### 416. 分割等和子集
@@ -959,4 +961,102 @@ $$
 
 
 
+### [474. 一和零](https://leetcode-cn.com/problems/ones-and-zeroes/)
+
+多维背包问题,多维费用的 0-1 背包问题
+
+~~~
+var findMaxForm = function(strs, m, n) {
+  if(!strs || strs.length == 0){
+      return 0
+  }
+  let dp =[]
+  for(let i = 0; i < m + 1; i++){
+      dp.push(new Array(n+1).fill(0));
+  }
+  
+  for(let i = 1; i < strs.length+1; i++){
+      let [zeros, ones] = cnt(strs[i-1])
+      for(let j = m; j >= zeros; j--){
+          for(let k = n; k >= ones; k--){
+              dp[j][k] = Math.max(dp[j][k], dp[j-zeros][k-ones] + 1)
+          }
+      }
+  }
+  return dp[m][n]
+};
+
+function cnt(str){
+  let ones = 0;
+  let zeros = 0;
+  for(let c of str){
+      switch(c){
+          case '1':{
+              ones += 1
+              break
+          }
+          case '0':{
+              zeros += 1
+              break
+          }
+          default:{
+              throw new Error('invalid char in str: ' + c)
+          }
+      }
+  }
+  return [zeros, ones]
+}
+~~~
+
+
+
+### [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change/)
+
+完全背包问题, 物品数量没有限制, 将 0-1 背包的优化空间的解法的逆序改为正序, 原来逆序是因为当前物品只能使用一次, 所以不能修改 dp[i-1] 的值. 改为正序是为了立刻修改 dp[i-1]的值, 因为当前物品可以使用无限次.
+
+~~~
+var coinChange = function(coins, amount) {
+    if(amount == 0){
+        return 0	// leetcode测试用例 bug
+    }
+    let dp = new Array(amount + 1).fill(0) 	// 可能fill(inf)会更好写?
+    for(let coin of coins){
+        for(let i = coin; i < amount + 1; i++){
+            if(i == coin){
+                dp[i] = 1
+            } else if(dp[i] == 0 && dp[i-coin] != 0){
+                dp[i] = dp[i-coin] + 1
+            } else if(dp[i-coin]!=0){
+                dp[i] = Math.min(dp[i], dp[i-coin] + 1)
+            }
+        }
+    }
+    return dp[amount] == 0 ? -1 : dp[amount]
+};
+~~~
+
+
+
+或者比较直观的
+
+~~~
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        dp = [float('inf')] * (amount + 1)
+        dp[0] = 0
+        for i in range(1, amount+1):
+            for j in coins:
+                if j <= i:
+                    dp[i] = min(dp[i], dp[i-j] + 1)
+        if dp[-1] == float('inf'):
+            return -1
+        else:
+            return dp[-1]
+~~~
+
+两种解法的时间复杂度一样.
+
+
+
+==思考一下其他背包问题能不能用上面这种方法解决==
 
