@@ -1058,5 +1058,45 @@ class Solution:
 
 
 
-==思考一下其他背包问题能不能用上面这种方法解决==
+==TODO: 思考一下其他背包问题能不能用上面这种方法解决==
+
+
+
+### [518. 零钱兑换 II](https://leetcode-cn.com/problems/coin-change-2/)
+
+完全背包问题, 用 dp[i] 记录可行的组合数
+
+~~~
+var change = function(amount, coins) {
+    const dp = new Array(amount+1).fill(0);
+    dp[0] = 1;
+    for(let coin of coins){
+        for(let i = coin; i < amount+1; i++){
+            dp[i] += dp[i-coin];
+        }
+    }
+    return dp[amount];
+};
+~~~
+
+
+
+### [139. 单词拆分](https://leetcode-cn.com/problems/word-break/)
+
+物品出现顺序有要求的完全背包问题, 把物品的循环放在内层
+
+~~~
+var wordBreak = function(s, wordDict) {
+    const dp = new Array(s.length + 1).fill(false);
+    dp[0] = true;
+    for(let i = 1; i < s.length+1; i++){
+        for(let word of wordDict){
+            if(word.length <= i && s.slice(i-word.length, i) == word){
+                dp[i] = dp[i] || dp[i-word.length]
+            }
+        }
+    }
+    return dp[s.length]
+};
+~~~
 
