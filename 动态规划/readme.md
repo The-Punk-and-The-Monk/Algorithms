@@ -1,4 +1,4 @@
-编辑器 typora
+ 编辑器 typora
 
 ## 动态规划小技巧
 
@@ -1097,6 +1097,115 @@ var wordBreak = function(s, wordDict) {
         }
     }
     return dp[s.length]
+};
+~~~
+
+
+
+### [377. 组合总和 Ⅳ](https://leetcode-cn.com/problems/combination-sum-iv/)
+
+与 518 不同的是不同顺序的组合视为不同的组合, 所以物品的循环放在内层
+
+~~~
+var combinationSum4 = function(nums, target) {
+    if(!nums || nums.length == 0){
+        return 0;
+    }
+
+    let dp = new Array(target+1).fill(0)
+    dp[0] = 1
+    for(let i = 1; i < target+1; i++){
+        for(let num of nums){
+            if(i >= num){
+                dp[i] += dp[i-num]
+            }
+        }
+    }
+    return dp[target]
+};
+~~~
+
+
+
+## 股票交易
+
+https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iv/solution/gu-piao-jiao-yi-xi-lie-cong-tan-xin-dao-dong-tai-g/
+
+### [309. 最佳买卖股票时机含冷冻期](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/)
+
+以 $dp[i][0]$ 表示今天结算时手上没有股票, $dp[i][1]$表示今天结算时手上持有股票
+$$
+dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i]) \\
+dp[i][1] = max(dp[i-1][1], dp[i-2][0] - prices[i]) \\
+$$
+最后结果为 $dp[-1][0]$
+
+
+
+~~~
+var maxProfit = function(prices) {
+    if(!prices || prices.length < 2){
+        return 0
+    }
+    const dp = [];y
+    for(let i = 0; i < prices.length + 1; i++){		// 由于冷冻期的存在, 让 dp 比 prices 长 1
+        let tmp = i == 0 ? [0, 0] : [0, -prices[i-1]]	// 注意这里的初始化, 
+        dp.push(tmp)
+    }
+    dp[1][1] = -prices[0]
+    for(let i = 2; i < prices.length+1; i++){
+        let cur = prices[i-1]
+        dp[i][0] = Math.max(dp[i-1][0], dp[i-1][1] + cur)
+        dp[i][1] = Math.max(dp[i-2][0] - cur, dp[i-1][1])
+    }
+    return dp[prices.length][0]
+};
+~~~
+
+
+
+### [188. 买卖股票的最佳时机 IV 最多 k 次交易](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iv/)
+
+增加一维, 并在卖出时对交易次数加一
+
+~~~
+var maxProfit = function(k, prices) {
+  if(!prices || prices.length < 2 || k == 0){
+      return 0
+  }
+
+  if(k > Math.floor(prices.length / 2)){	// 如果 k 过大, 可视为无限次数. ps:如果没有这个优化, leetcode 会爆内存. 用 python 写的会超时. 另外, python 排名靠前的几个答案好像很牛逼的样子.还没看.
+    let profit = 0
+    for(let i = 1; i < prices.length; i++){ 	
+      if(prices[i] > prices[i - 1]){
+        profit += prices[i] - prices[i - 1]
+      }
+    }
+    return profit
+  }
+
+  const dp = []
+  let profit = 0
+
+  for(let i = 0; i < prices.length; i++){
+      let tmp = []
+      for(let j = 0; j < k+1; j++){		// 交易次数
+          tmp.push([-Infinity,-Infinity])	// 除了交易次数为 0 的时候可以初始化, j >= 1都是未知的, 所以初始化为负无穷
+      }
+      tmp[0][0] = 0
+      tmp[0][1] = -prices[i]	// 卖出时才算一次完整交易, 所以 j=0 时可以持有股票
+      dp.push(tmp)
+  }
+  for(let i = 1; i < prices.length; i++){
+      for(let j = 0; j < Math.min(k+1, Math.floor((i+1)/2) + 1); j++){		// 卖出时才算一次完整交易, 所以 j 从 0 开始遍历, 同时注意 j 的上限
+          let tmp = j != 0 ? dp[i-1][j-1][1] : -Infinity;
+          dp[i][j][0] = Math.max(dp[i-1][j][0], tmp + prices[i]);
+          dp[i][j][1] = Math.max(dp[i-1][j][1], dp[i-1][j][0] - prices[i])
+          profit = Math.max(dp[i][j][0], profit)
+      }
+  }
+
+  return profit
 };
 ~~~
 
