@@ -1209,3 +1209,77 @@ var maxProfit = function(k, prices) {
 };
 ~~~
 
+
+
+## 字符串编辑
+
+### [583. 两个字符串的删除操作](https://leetcode-cn.com/problems/delete-operation-for-two-strings/)
+
+转换为求最长公共子序列
+
+
+
+### [72. 编辑距离](https://leetcode-cn.com/problems/edit-distance/)
+
+以 $dp[i][j]$ 表示 word1[0:i] 和 word2[0:j] 的编辑距离
+
+当 word1[i-1] == word2[j-1] 
+$$
+dp[i][j] = dp[i-1][j-1]
+$$
+当 word1[i-1] != word2[j-1] 
+
+情况 1, 把 word1[0:i-1] 变为 word2[0:j] 后, 删除多余的 word1[i-1]
+$$
+(1) = dp[i-1][j] + 1
+$$
+情况 2, 把 word1[0:i] 变为 word2[0:j-1] 后, 在后面再插入 word2[j-1]
+$$
+(2) = dp[i][j-1] + 1
+$$
+情况 3, 替换 word1[i-1] 为 word2[j-1]
+$$
+(3) = dp[i-1][j-1] + 1
+$$
+三种情况分别对应删除, 插入, 替换. 需要都考虑, 取最小
+$$
+dp[i][j] = min((1), (2), (3))
+$$
+
+~~~javascript
+var minDistance = function(word1, word2) {
+    if(!word1.length){
+        return word2.length
+    }
+    if(!word2.length){
+        return word1.length
+    }
+
+    const dp = []
+    for(let i = 0; i < word1.length + 1; i++){
+        let tmp = new Array(word2.length + 1).fill(0)
+        dp.push(tmp)
+    }
+    
+    // 初始化
+    for(let i = 0; i < word1.length + 1; i++){
+        dp[i][0] = i
+    }
+    for(let j = 0; j < word2.length + 1; j++){
+        dp[0][j] = j
+    }
+    
+    
+    for(let i = 1; i < word1.length + 1; i++){
+        for(let j = 1; j < word2.length + 1; j++){
+            if(word1[i-1] == word2[j-1]){
+                dp[i][j] = dp[i-1][j-1]
+            }else{
+                dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+            }
+        }
+    }
+    return dp[word1.length][word2.length]
+};
+~~~
+
