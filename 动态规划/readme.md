@@ -1283,3 +1283,27 @@ var minDistance = function(word1, word2) {
 };
 ~~~
 
+
+
+### [650. 只有两个键的键盘](https://leetcode-cn.com/problems/2-keys-keyboard/) 复制粘贴字符
+
+以 dp[i] 表示 达成 i 的最小操作次数, 
+
+~~~
+var minSteps = function(n) {
+    const dp = new Array(n+1).fill(0)
+    for(let i = 2; i < n+1; i++){
+        for(let j = Math.floor(i/2); j >= 2; j--){	// 找到最大的约数
+            if(i%j == 0){
+                dp[i] = dp[j] + i/j		// dp[i] 等于其最大约数的 dp 加上 倍数
+                break
+            }
+        }
+        if(dp[i] == 0){
+            dp[i] = i
+        }
+    }
+    return dp[n]
+};
+~~~
+
