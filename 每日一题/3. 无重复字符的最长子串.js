@@ -1,7 +1,3 @@
-/**
- * @param {string} s
- * @return {number}
- */
 var lengthOfLongestSubstring = function(s) {
   if(s.length == 0){
     return 0
@@ -23,5 +19,3 @@ var lengthOfLongestSubstring = function(s) {
   }
   return maxLen
 };
-
-console.log(lengthOfLongestSubstring('dvdf'))
