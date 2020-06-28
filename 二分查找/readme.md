@@ -17,6 +17,10 @@
 
 * 循环条件
 
+  当确定要找的目标就在数组里面, 用 left <= right, 在循环体里面处理好边界问题
+
+  
+
 * mid 的求法 
 
   ~~~
@@ -35,7 +39,7 @@
 
 * left, right 的下一个取值
 
-  总是根据当前mid 可不可能是最终结果, 来判断要不要跳过 mid. 如 left = mid, 或 left = mid + 1˙
+  总是根据当前mid 可不可能是最终结果, 来判断要不要跳过 mid. 如 left = mid, 或 left = mid + 1˙. 见题:寻找比目标字母大的最小字母
 
 * 边界值处理
 
@@ -75,4 +79,47 @@ var mySqrt = function(x) {
     }
 };
 ~~~
+
+
+
+### [744. 寻找比目标字母大的最小字母](https://leetcode-cn.com/problems/find-smallest-letter-greater-than-target/)
+
+有序数组的二分查找
+
+~~~javascript
+/**
+ * @param {character[]} letters
+ * @param {character} target
+ * @return {character}
+ */
+var nextGreatestLetter = function(letters, target) {
+    if(letters.length == 1){
+        return letters[0]
+    }
+
+    let left = 0
+    let right = letters.length - 1
+    while(left <= right){	// 确定要找的在数组里
+        let mid = left + Math.floor((right-left)/2)
+        let curChar = letters[mid]
+        if((mid == 0) || (letters[mid-1] <= target && curChar > target)){	// 由于有序, 如果一直循环到 mid=0, 则 mid 便是结果.
+            return letters[mid]
+        }else if(mid == letters.length -1){	// 如果mid 为 len-1还不满足上面的条件, 则根据题意, 结果是 0
+            return letters[0]
+        }else if(curChar <= target){ 
+            left = mid + 1
+        }else{
+            right = mid
+        }
+    }
+};
+~~~
+
+这里 left, right 的取值说明一下
+
+分成三种情况分析:
+
+1. curChar < target: mid 不可能是答案, 而且是小于, 所以选择 left = mid + 1. 跳过这个 mid
+2. curChar = target: mid 也不可能是答案, 由于有序递增, 答案在左侧, 所以选择 left = mid+1, 跳过这个 mid
+3. curChar > target: mid 可能是答案, 答案<=curChar, 所以 right = mid
 
