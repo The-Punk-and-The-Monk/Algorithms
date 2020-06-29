@@ -123,3 +123,39 @@ var nextGreatestLetter = function(letters, target) {
 2. curChar = target: mid 也不可能是答案, 由于有序递增, 答案在左侧, 所以选择 left = mid+1, 跳过这个 mid
 3. curChar > target: mid 可能是答案, 答案<=curChar, 所以 right = mid
 
+
+
+### [540. 有序数组中的单一元素](https://leetcode-cn.com/problems/single-element-in-a-sorted-array/)
+
+有序数组的二分查找
+
+~~~
+var singleNonDuplicate = function(nums) {
+  if(nums.length === 1){
+    return nums[0];
+  }
+
+  let left = 0;
+  let right = nums.length - 1;
+
+  while(left <= right){
+    let mid = left + Math.floor((right - left) / 2)
+    
+    if(mid % 2 == 1){	// 因为单一元素的 index 肯定是偶数
+      mid = mid - 1
+    }
+    
+    if((mid == 0 || nums[mid-1] < nums[mid]) && 
+        (mid == nums.length - 1 || nums[mid] < nums[mid+1])){
+      return nums[mid]
+    }else if(mid < nums.length - 1 && nums[mid+1] == nums[mid]){	// 单一元素在当前元素的左侧, 建议在纸上写个数组看看就懂了
+      left = mid + 2
+    }else{
+      right = mid - 2
+    }
+  }
+};
+~~~
+
+
+
