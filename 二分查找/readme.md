@@ -19,6 +19,8 @@
 
   当确定要找的目标就在数组里面, 用 left <= right, 在循环体里面处理好边界问题
 
+  当目标不一定在数组里面, 比如寻找插入位置, 用 left < right, 跳出循环后对边界做判断, 可见题: 在排序数组中查找元素的第一个和最后一个位置
+
   
 
 * mid 的求法 
@@ -26,7 +28,7 @@
   ~~~
   // 当 left + 1 = right 时
   
-  // mid 取值为 left
+  // mid 取值为 left, 如果 left 的下一个取值是 mid 可能会陷入死循环
   let mid = left + Math.floor((right - left) / 2)
   
   // mid 取值为 right
@@ -158,4 +160,145 @@ var singleNonDuplicate = function(nums) {
 ~~~
 
 
+
+### [278. 第一个错误的版本](https://leetcode-cn.com/problems/first-bad-version/)
+
+有序数组的二分查找
+
+~~~
+/**
+ * Definition for isBadVersion()
+ * 
+ * @param {integer} version number
+ * @return {boolean} whether the version is bad
+ * isBadVersion = function(version) {
+ *     ...
+ * };
+ */
+
+/**
+ * @param {function} isBadVersion()
+ * @return {function}
+ */
+var solution = function(isBadVersion) {
+    /**
+     * @param {integer} n Total versions
+     * @return {integer} The first bad version
+     */
+    return function(n) {
+        let left = 1
+        let right = n
+        while(left <= right){
+            let mid = left + Math.floor((right - left) / 2)
+            if((mid == 0 || !isBadVersion(mid-1)) && isBadVersion(mid)){
+                return mid
+            }else if(!isBadVersion(mid)){
+                left = mid + 1
+            }else{
+                right = mid
+            }
+        }
+    };
+};
+~~~
+
+
+
+### [153. 寻找旋转排序数组中的最小值](https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/)
+
+
+
+~~~javascript
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var findMin = function(nums) {
+  if(nums.length == 1){
+      return nums[0]
+  }
+  let left = 0
+  let right = nums.length - 1
+  
+  // 应对 没有翻转的有序数组
+  if(nums[right] > nums[0]){
+  	return nums[0]
+  }
+  
+  while(left <= right){
+      let mid = left + Math.floor((right - left)/ 2)
+      if((mid == 0 || nums[mid - 1] > nums[mid]) && (mid == nums.length-1 || nums[mid] < nums[mid+1])){
+          return nums[mid]
+      }else if(mid == 0 || nums[mid] > nums[0]){
+          left = mid + 1
+      }else{
+          right = mid - 1
+      }
+  }
+};
+~~~
+
+
+
+### [34. 在排序数组中查找元素的第一个和最后一个位置](https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+
+
+
+~~~javascript
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+var searchRange = function(nums, target) {
+    let leftEdge = findLeftEdge(nums, target)
+    if(leftEdge == -1){
+        return [-1, -1]
+    }
+    let rightEdge = findRightEdge(nums, target)
+    return [leftEdge, rightEdge]
+};
+
+function findLeftEdge(nums, target){
+    let left = 0
+    let right = nums.length - 1
+    while(left < right){	// target 不一定在 nums 里
+        let mid = left + Math.floor((right - left) / 2)
+        if(nums[mid] == target && (mid == 0 || nums[mid - 1] < target)){
+            return mid
+        }else if(nums[mid] < target){		
+            left = mid + 1
+        }else{	// num[mid] == target 时, mid可能是结果, 因为要寻找左边界, 所以选择 right 向左走
+            right = mid
+        }
+    }
+    return nums[left] == target ? left : -1		// 必有 left == right, 见下面的分析
+}
+
+function findRightEdge(nums, target){
+    let left = 0
+    let right = nums.length - 1
+    while(left < right){
+        let mid = left + Math.floor((right - left)/2)
+        if(nums[mid] == target && (mid == nums.length - 1 || nums[mid + 1] > target)){ 
+            return mid
+        }else if(nums[mid] <= target){	// num[mid] == target 时, mid可能是结果, 因为要寻找右边界, 所以选择 left 向右走
+            left = mid + 1
+        }else{
+            right = mid
+        }
+    }
+    return nums[right] == target ? right : -1
+}
+~~~
+
+
+
+由于当 left + 1 = right 时, 
+
+* mid 取 left
+* left = mid + 1 // 原 right
+* right = mid // 原 left 
+
+下一个循环必有 left == right, 而且不会陷入死循环
 
