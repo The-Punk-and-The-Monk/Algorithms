@@ -29,4 +29,4 @@ function countTree(base, n){
   return count
 }
 
-console.log(findKthNumber(957747794,424238336))
+console.log(findKthNumber(957747794,424238336))   // 481814499
