@@ -358,7 +358,7 @@ var findMedianSortedArrays = function(nums1, nums2) {
           rightMin = nums2[j] != undefined ? Math.min(rightMin, nums2[j]) : rightMin
 
           return (leftMax + rightMin) / 2
-      } else if(i < m && nums1[i] < nums2[j-1]){
+      } else if(i < m && nums1[i] < nums2[j-1]){ // i太小
           left = i + 1
       }else{
           right = i - 1

@@ -33,7 +33,7 @@ var validUtf8 = function(data) {
  * 197 & 224  // 192 
  * 197 & 224 == 192 // 0 
  * (197 & 224) == 192 // true
- * 不知道为啥
+ * & 的优先级比 == 低
  */
 function validOneByteUtf8(num){
   return (num & 128) == 0;
