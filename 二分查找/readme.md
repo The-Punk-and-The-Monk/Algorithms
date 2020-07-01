@@ -302,3 +302,68 @@ function findRightEdge(nums, target){
 
 下一个循环必有 left == right, 而且不会陷入死循环
 
+
+
+### ==[4. 寻找两个正序数组的中位数](https://leetcode-cn.com/problems/median-of-two-sorted-arrays/)==
+
+设数组为 A, B, len 分别为m, n
+
+A:[0, … , m-1]
+
+B:[0, … , n-1]
+
+在A 取 i, B 取 j
+
+A:[0,…,i-1, i,…,m-1]
+
+B:[0,…,j-1, j,…,n-1]
+
+假设 i 跟 j 的取值满足:
+$$
+A[i] >= B[j-1] \\
+B[j] >= A[i-1]
+$$
+则中位数在这四个数中
+
+
+
+接下来要推:
+
+* i, j 的关系
+* i 的边界取值对 j 的影响, 即 i >= m 时, i <= 0 时, 可用于节省条件判断
+
+~~~javascript
+var findMedianSortedArrays = function(nums1, nums2) {
+  if(nums1.length > nums2.length){
+      [nums1, nums2] = [nums2, nums1]
+  }
+  let m = nums1.length
+  let n = nums2.length
+  let left = 0
+  let right = m
+  let halfnum = Math.floor((m+n+1)/2)
+  while(left <= right){		// 确定可以在 [left, right]中找到这样一个 i
+      let i = left + Math.floor((right - left)/2)
+      let j = halfnum - i 
+      if((i >= m || nums1[i] >= nums2[j-1]) 
+          && (i <= 0 || nums2[j] >= nums1[i-1])
+      ){
+          let leftMax = nums1[i-1] != undefined ? nums1[i-1] : -Infinity
+          leftMax = nums2[j-1] != undefined ? Math.max(leftMax, nums2[j-1]) : leftMax
+          if((m + n) % 2 == 1){		//根据 halfnum 的求法, 当m+n 为奇数是, 中位数处于左半部分
+              return leftMax
+          }
+
+          let rightMin = nums1[i] != undefined ? nums1[i] : Infinity
+          rightMin = nums2[j] != undefined ? Math.min(rightMin, nums2[j]) : rightMin
+
+          return (leftMax + rightMin) / 2
+      } else if(i < m && nums1[i] < nums2[j-1]){
+          left = i + 1
+      }else{
+          right = i - 1
+      }
+  }
+};
+~~~
+
