@@ -1,39 +1,31 @@
 /**
- * @param {number[]} nums1
- * @param {number[]} nums2
+ * @param {number} n
  * @return {number}
  */
-var findMedianSortedArrays = function(nums1, nums2) {
-  if(nums1.length > nums2.length){
-      [nums1, nums2] = [nums2, nums1]
+var numSquares = function(n) {
+  let squareNumsSet = new Set();
+  for(let i = 1; i*i <= n; i++){
+    squareNumsSet.add(i*i);
   }
-  let m = nums1.length
-  let n = nums2.length
-  let left = 0
-  let right = m
-  let halfnum = Math.floor((m+n+1)/2)
-  while(left <= right){
-      let i = left + Math.floor((right - left)/2)
-      let j = halfnum - i 
-      if((i >= m || nums1[i] >= nums2[j-1]) 
-          && (i <= 0 || nums2[j] >= nums1[i-1])
-      ){
-          let leftMax = nums1[i-1] != undefined ? nums1[i-1] : -Infinity
-          leftMax = nums2[j-1] != undefined ? Math.max(leftMax, nums2[j-1]) : leftMax
-          if((m + n) % 2 == 1){
-              return leftMax
-          }
 
-          let rightMin = nums1[i] != undefined ? nums1[i] : Infinity
-          rightMin = nums2[j] != undefined ? Math.min(rightMin, nums2[j]) : rightMin
-
-          return (leftMax + rightMin) / 2
-      } else if(i < m && nums1[i] < nums2[j-1]){
-          left = i + 1
-      }else{
-          right = i - 1
+  let q = new Set([n])
+  let level = 0
+  while(q.size != 0){
+    level += 1
+    let newQ = new Set()
+    for(let target of q){
+      if(squareNumsSet.has(target)){
+        return level
       }
+      for(let squareNum of squareNumsSet){
+        if(squareNum <= target){
+          newQ.add(target - squareNum)
+        }
+      }
+    }
+    q = newQ
   }
+  return -1
 };
 
-console.log(findMedianSortedArrays([0,0], [0,0]))
+console.log(numSquares(13))
