@@ -141,3 +141,78 @@ var numSquares = function(n) {
 
 
 
+### [127. 单词接龙](https://leetcode-cn.com/problems/word-ladder/)
+
+~~~javascript
+/**
+ * @param {string} beginWord
+ * @param {string} endWord
+ * @param {string[]} wordList
+ * @return {number}
+ */
+var ladderLength = function(beginWord, endWord, wordList) {
+  let map = new Map()
+  let usedWord = new Set()
+  addWordsToMap(map, [beginWord])
+  if (!addWordsToMap(map, wordList, findWord = endWord)) {
+    return 0
+  }
+
+  let q = [beginWord]
+  usedWord.add(beginWord)
+  let ladder = 0
+  while (q.length != 0) {
+    let curLen = q.length
+    ladder += 1
+    for (let i = 0; i < curLen; i++) {
+      let curWord = q[i]
+      if (curWord == endWord) {
+        return ladder
+      }
+
+      for (let j = 0; j < curWord.length; j++) {
+        let key = replaceCharWithStar(curWord, j)
+        let reachableWords = map.has(key) ? map.get(key) : []
+        for (let k = 0; k < reachableWords.length; k++) {
+          if (!usedWord.has(reachableWords[k])) {
+            q.push(reachableWords[k])
+            usedWord.add(reachableWords[k])
+          }
+        }
+      }
+      
+    }
+    q = q.slice(curLen)
+  }
+
+  return 0
+};
+
+function addWordsToMap(map, wordList, findWord = null) {		// 建立可达单词的 map
+  let flag = findWord == null ? true : false
+  for (let i = 0; i < wordList.length; i++) {
+    let curWord = wordList[i]
+    if (findWord != null && curWord == findWord) {
+      flag = true
+    }
+
+    for (let j = 0; j < curWord.length; j++) {
+      let key = replaceCharWithStar(curWord, j)		// 若单词为 dot, dog, 则同在 key='do*'下, 表示他们互相可达
+      if (!map.has(key)) {
+        map.set(key, [])
+      }
+      map.get(key).push(curWord)
+    }
+  }
+  return flag
+}
+
+function replaceCharWithStar(word, i) {
+  return word.slice(0, i) + '*' + word.slice(i + 1)
+}
+~~~
+
+
+
+
+
