@@ -7,7 +7,7 @@
 队列：用来存储每一轮遍历得到的节点；
 标记：对于遍历过的节点，应该将它标记，防止重复遍历。
 
-PS: 在出队时做操作, 入队只判断符不符合入队条件
+PS: 在出队还是入队时做操作要想清楚, 入队时做操作可能会比较快, 因为少一轮层序遍历
 
 
 
@@ -213,6 +213,311 @@ function replaceCharWithStar(word, i) {
 ~~~
 
 
+
+
+
+## DFS
+
+广度优先搜索一层一层遍历，每一层得到的所有新节点，要用队列存储起来以备下一层遍历的时候再遍历。
+
+而深度优先搜索在得到一个新节点时立即对新节点进行遍历, 从一个节点出发，使用 DFS 对一个图进行遍历时，能够遍历到的节点都是从初始节点可达的，DFS 常用来求解这种 **可达性** 问题。
+
+在程序实现 DFS 时需要考虑以下问题：
+
+- 栈：用栈来保存当前节点信息，当遍历新节点返回时能够继续遍历当前节点。可以使用递归栈。
+- 标记：和 BFS 一样同样需要对已经遍历过的节点进行标记。
+
+
+
+### [695. 岛屿的最大面积](https://leetcode-cn.com/problems/max-area-of-island/)
+
+~~~javascript
+/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var maxAreaOfIsland = function(grid) {
+  if(grid.length == 0 || grid[0].length == 0){
+    return 0
+  }
+  let m = grid.length, n = grid[0].length
+  let visited = []
+  for(let i = 0; i < m; i++){
+    visited.push(new Array(n).fill(0))
+  }
+
+  let maxCnt = 0
+  for(let i = 0; i < m; i++){
+    for(let j = 0; j < n; j++){
+      if(visited[i][j] == 0 && grid[i][j] == 1){
+        let curCnt = dfs(grid, visited, [i, j])
+        maxCnt = Math.max(maxCnt, curCnt)
+      }
+    }
+  }
+  return maxCnt
+};
+
+function dfs(grid, visited,root){
+  visited[root[0]][root[1]] = 1
+  let stack = [root]
+  let cnt = 1
+  let directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+  let m = grid.length, n = grid[0].length
+  while(stack.length != 0){
+    let [curX, curY] = stack.pop()
+    for(let [x, y] of directions){
+      let tmpX = curX + x, tmpY = curY + y
+      if(tmpX >= 0 && tmpX < m && tmpY >= 0 && tmpY < n && visited[tmpX][tmpY] == 0){
+        visited[tmpX][tmpY] = 1
+        if(grid[tmpX][tmpY] == 1){
+          stack.push([tmpX, tmpY])
+          cnt += 1
+        }
+      }
+    }
+  }
+  return cnt
+}
+~~~
+
+
+
+### [200. 岛屿数量](https://leetcode-cn.com/problems/number-of-islands/)
+
+
+
+~~~javascript
+/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var numIslands = function(grid) {
+  if(grid.length == 0 || grid[0].length == 0){
+    return 0
+  }
+  let m = grid.length, n = grid[0].length
+  let visited = []
+  for(let i = 0; i < m; i++){
+    visited.push(new Array(n).fill(0))
+  }
+
+  let cnt = 0
+  for(let i = 0; i < m; i++){
+    for(let j = 0; j < n; j++){
+      if(visited[i][j] == 0 && grid[i][j] == 1){
+        cnt += 1
+        dfs(grid, visited, [i,j])
+      }
+    }
+  }
+  return cnt
+};
+
+function dfs(grid, visited,root){
+  visited[root[0]][root[1]] = 1
+  let stack = [root]
+  let directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+  let m = grid.length, n = grid[0].length
+  while(stack.length != 0){
+    let [curX, curY] = stack.pop()
+    for(let [x, y] of directions){
+      let tmpX = curX + x, tmpY = curY + y
+      if(tmpX >= 0 && tmpX < m && tmpY >= 0 && tmpY < n && visited[tmpX][tmpY] == 0){
+        visited[tmpX][tmpY] = 1
+        if(grid[tmpX][tmpY] == 1){
+          stack.push([tmpX, tmpY])
+        }
+      }
+    }
+  }
+}
+~~~
+
+
+
+### [547. 朋友圈](https://leetcode-cn.com/problems/friend-circles/)
+
+
+
+~~~javascript
+/**
+ * @param {number[][]} M
+ * @return {number}
+ */
+var findCircleNum = function(M) {
+  if(M.length == 0 || M[0].length == 0){
+    return 0
+  }
+  let n = M.length
+  let visited = new Array(n).fill(0)
+
+  let cnt = 0
+  for(let i = 0; i < n; i++){
+    if(visited[i] == 0){
+      cnt += 1
+      dfs(M, visited, i)
+    }
+  }
+  return cnt
+};
+
+function dfs(M, visited, root){
+  visited[root] = 1
+  let stack = [root]
+  while(stack.length != 0){
+    let cur = stack.pop()
+    for(let i = 0; i < M.length; i++){
+      if(visited[i] == 0 && M[cur][i] == 1){
+        visited[i] = 1
+        stack.push(i)
+      }
+    }
+  }
+}
+~~~
+
+
+
+### [130. 被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)
+
+#### DFS
+
+
+
+~~~javascript
+/**
+ * @param {character[][]} board
+ * @return {void} Do not return anything, modify board in-place instead.
+ */
+var solve = function(board) {
+  if(board.length == 0 || board[0].length == 0){
+    return
+  }
+
+  let m = board.length, n = board[0].length
+  let visited = []
+  for(let i = 0; i < m; i++){
+    visited.push(new Array(n).fill(0))
+  }
+
+  for(let i = 0; i < m; i++){
+    for(let j = 0; j < n; j++){
+      if(visited[i][j] == 0 && board[i][j] == 'O'){
+        fillX(board, dfs(board, visited, [i, j]))
+      }
+    }
+  }
+};
+
+function dfs(board, visited, root){
+  visited[root[0]][root[1]] = 1
+  let reachBorder = false 
+  let stack = [root]
+  let all = [root]
+  let directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+  let m = board.length, n = board[0].length
+  
+  while(stack.length != 0){
+    let [curX, curY] = stack.pop()
+    if(curX == 0 || curX == m - 1 || curY == 0 || curY == n- 1){
+      reachBorder = true
+    }
+    for(let [x, y] of directions){
+      let tmpX = curX + x, tmpY = curY + y
+      if(tmpX >= 0 && tmpX < m && tmpY >= 0 && tmpY < n && visited[tmpX][tmpY] == 0){
+        visited[tmpX][tmpY] = 1
+        if(board[tmpX][tmpY] == 'O'){
+          stack.push([tmpX, tmpY])
+          all.push([tmpX, tmpY])
+        }
+      }
+    }
+  }
+
+  return reachBorder ? [] : all
+}
+
+function fillX(board, indexs){
+  for(let [x, y] of indexs){
+    board[x][y] = 'X'
+  }
+}
+~~~
+
+
+
+#### 并查集
+
+主要掌握并查集
+
+~~~javascript
+/**
+ * @param {character[][]} board
+ * @return {void} Do not return anything, modify board in-place instead.
+ */
+class UnionFind {
+  constructor(){
+    this.f = new Map();
+  }
+
+  find = (x) => {   // 查找 x 的所归属的集合
+    if(!this.f.has(x)){
+      this.f.set(x, x)
+    }
+    if(this.f.get(x) != x){
+      this.f.set(x, this.find(this.f.get(x)))
+    }
+    return this.f.get(x)
+  }
+
+  union = (x, y) => {  // 合并集合
+    this.f.set(this.find(x), this.find(y))
+  }
+}
+
+var solve = function(board) {
+  if(!board || board.length == 0 || board[0].length == 0){
+    return 
+  }
+
+  let m = board.length, n = board[0].length
+  let dummy = m * n
+  let unionFind = new UnionFind()
+
+  function cntIdx(i, j){
+    return i * n + j
+  }
+
+  for(let i = 0; i < m; i++){
+    for(let j = 0; j < n; j++){
+      if(board[i][j] != 'O'){
+        continue
+      }
+      let cur = cntIdx(i, j)
+      if(i == 0 || i == m - 1 || j == 0 || j == n - 1){
+        unionFind.union(cur, dummy)
+      }
+      for(let [x, y] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){
+        let tmpX = i + x, tmpY = j + y
+        if(tmpX >= 0 && tmpX < m && tmpY >= 0 && tmpY < n && board[tmpX][tmpY] == 'O'){
+          unionFind.union(cntIdx(tmpX, tmpY), cur)
+        }
+      }
+    }
+  }
+
+  for(let i = 0; i < m; i++){
+    for(let j = 0; j < n; j++){
+      if(unionFind.find(cntIdx(i, j)) == unionFind.find(dummy)){
+        board[i][j] = 'O'
+      }else{
+        board[i][j] = 'X'
+      }
+    }
+  }
+};
+~~~
 
 
 
