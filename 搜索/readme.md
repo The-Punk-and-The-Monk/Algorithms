@@ -521,3 +521,64 @@ var solve = function(board) {
 
 
 
+### [417. 太平洋大西洋水流问题](https://leetcode-cn.com/problems/pacific-atlantic-water-flow/)
+
+~~~javascript
+/**
+ * @param {number[][]} matrix
+ * @return {number[][]}
+ */
+var pacificAtlantic = function(matrix) {
+  if(!matrix || matrix.length == 0 || matrix[0].length == 0){
+    return []
+  }
+
+  let [m, n] = [matrix.length, matrix[0].length]
+  let ans = []
+  let reachableOne = []
+  let reachableTwo = []
+  for(let i = 0; i < m; i++){
+    reachableOne.push(new Array(n).fill(0))
+    reachableTwo.push(new Array(n).fill(0))
+  }
+
+  for(let i = 0; i < m; i++){
+    dfs(matrix, reachableOne, [i, 0])
+    dfs(matrix, reachableTwo, [i, n-1])
+  }
+
+  for(let j = 0; j < n; j++){
+    dfs(matrix, reachableOne, [0, j])
+    dfs(matrix, reachableTwo, [m-1, j])
+  }
+
+  for(let i = 0; i < m; i++){
+    for(let j = 0; j < n; j++){
+      if(reachableOne[i][j] == 1 && reachableTwo[i][j] == 1){
+        ans.push([i, j])
+      }
+    }
+  }
+  return ans
+};
+
+function dfs(matrix, reachable, root){
+  let i = root[0], j = root[1]
+  reachable[i][j] = 1
+  let stack = [root]
+  let [m, n] = [matrix.length, matrix[0].length]
+  let directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+  while(stack.length != 0){
+    let [curX, curY] = stack.pop()
+    let curH = matrix[curX][curY]
+    for(let [x, y] of directions){
+      let [tmpX, tmpY] = [curX + x, curY + y]
+      if(tmpX >= 0 && tmpX < m && tmpY >= 0 && tmpY < n && reachable[tmpX][tmpY] == 0 && matrix[tmpX][tmpY] >= curH){
+        reachable[tmpX][tmpY] = 1
+        stack.push([tmpX, tmpY])
+      }
+    }
+  }
+}
+~~~
+
