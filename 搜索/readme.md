@@ -642,3 +642,304 @@ var letterCombinations = function(digits) {
 };
 ~~~
 
+
+
+### [93. 复原IP地址](https://leetcode-cn.com/problems/restore-ip-addresses/)
+
+
+
+~~~javascript
+/**
+ * @param {string} s
+ * @return {string[]}
+ */
+var restoreIpAddresses = function(s) {
+  if (s.length > 12) {
+    return []
+  }
+
+  let ans = []
+  backtracking(s, 0, [], 0, ans)
+  return ans
+};
+
+function backtracking(s, start, prev, part, ans) {
+  if (part == 4) {
+    if (start == s.length) {
+      ans.push(prev.join('.'))
+    }
+    return
+  }
+  if (checkLen(s, start, part)) {
+    for (let i = 1; i < 4; i++) {
+      if (start + i > s.length) {
+        break
+      }
+      if (validNum(s, start, start + i)) {
+        prev.push(s.slice(start, start + i))
+        backtracking(s, start + i, prev, part + 1, ans)
+        prev.pop()
+      }
+    }
+  }
+}
+
+function checkLen(s, start, part) {
+  if (s.length - start > (4 - part) * 3) {
+    return false
+  }
+  return true
+}
+
+function validNum(s, start, end) {
+  let num = parseInt(s.slice(start, end))
+  if(num == 0 && start + 1 != end){
+    return false
+  }
+  if(num > 0 && s[start] == '0'){
+    return false
+  }
+  if (num >= 0 && num < 256) {
+    return true
+  }
+  return false
+}
+~~~
+
+
+
+### [79. 单词搜索](https://leetcode-cn.com/problems/word-search/)
+
+
+
+~~~javascript
+/**
+ * @param {character[][]} board
+ * @param {string} word
+ * @return {boolean}
+ */
+var exist = function(board, word) {
+  if(!board || board.length == 0 || board[0].length == 0 || word.length == 0){
+    return false
+  }
+
+  let m = board.length, n = board[0].length
+  let visited = []
+  for(let i = 0; i < m; i++){
+    visited.push(new Array(n).fill(0))
+  }
+
+  for(let i = 0; i < m; i++){
+    for(let j = 0; j < n; j++){
+      if(backtracking(board, i, j, visited, 0, word)){
+        return true
+      }
+    }
+  }
+  return false
+};
+
+function backtracking(board, x, y, visited, p, word){
+  if(x < 0 || x >= board.length || y < 0 || y >= board[0].length){
+    return false
+  }
+  if(visited[x][y] == 1 || p >= word.length || board[x][y] != word[p]){
+    return false
+  }
+  if(p == word.length - 1){
+    return true
+  }
+
+  visited[x][y] = 1
+  let m = board.length, n = board[0].length
+  let directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+  for(let [dx, dy] of directions){
+    let [tmpX, tmpY] = [x + dx, y + dy]
+    if(backtracking(board, tmpX, tmpY, visited, p+1, word)){
+      return true
+    }
+  }
+  visited[x][y] = 0
+  return false
+}
+
+console.log(exist([["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+,"ABCCED"))
+~~~
+
+
+
+### [257. 二叉树的所有路径](https://leetcode-cn.com/problems/binary-tree-paths/)
+
+
+
+~~~javascript
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {string[]}
+ */
+var binaryTreePaths = function(root) {
+  let ans = []
+  preOrder(root, '', ans)
+  return ans
+};
+
+function preOrder(root, prev, ans){
+  if(!root){
+    return 
+  }
+
+  if(prev == ''){
+    prev += root.val
+  }else{
+    prev += '->' + root.val
+  }
+  if(root.left == null && root.right == null){
+    ans.push(prev)
+    return
+  }
+  preOrder(root.left, prev, ans)
+  preOrder(root.right, prev, ans)
+}
+~~~
+
+
+
+### [46. 全排列](https://leetcode-cn.com/problems/permutations/)
+
+
+
+~~~javascript
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var permute = function(nums) {
+  if(!nums || nums.length == 0){
+    return []
+  }
+
+  let ans = []
+  let visited = new Array(nums.length).fill(false)
+  backtracking(nums, [], visited, ans)
+  return ans
+};
+
+function backtracking(nums, prev, visited, ans){
+  if(prev.length == nums.length){
+    ans.push([...prev])
+    return
+  }
+
+  for(let i = 0; i < nums.length; i++){
+    if(!visited[i]){
+      visited[i] = true
+      prev.push(nums[i])
+      backtracking(nums, prev, visited, ans)
+      visited[i] = false
+      prev.pop()
+    }
+  }
+}
+~~~
+
+
+
+
+
+### [47. 全排列 II](https://leetcode-cn.com/problems/permutations-ii/)
+
+引起结果重复是由于重复数字的排列引起的，如[1-1, 1-2, 1-3]的一个排列[1-2, 1-1, 1-3]
+
+可以通过限制重复数字的选择顺序来除去重复结果，就是严格限制[1-1, 1-2, 1-3]在结果中其相对顺序也严格按照原序排列，如[1-1, 9, 1-2, 100, 1-3]
+
+~~~javascript
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var permuteUnique = function(nums) {
+  if(!nums || nums.length == 0){
+    return 0
+  }
+
+  nums.sort((a, b) => a - b)
+  let ans  = []
+  let visited = new Array(nums.length).fill(false)
+  backtracking(nums, visited, [], ans)
+  return ans
+};
+
+function backtracking(nums, visited, prev, ans){
+  if(prev.length == nums.length){
+    ans.push([...prev])
+    return
+  }
+
+  for(let i = 0; i < nums.length; i++){
+    if(!visited[i]){
+      if(i > 0 && nums[i] == nums[i-1] && visited[i-1] == false){		// 限制相同数字的出现顺序
+        continue
+      }
+      visited[i] = true
+      prev.push(nums[i])
+      backtracking(nums, visited, prev, ans)
+      visited[i] = false
+      prev.pop()
+    }
+  }
+}
+~~~
+
+
+
+### [77. 组合](https://leetcode-cn.com/problems/combinations/)
+
+
+
+~~~javascript
+/**
+ * @param {number} n
+ * @param {number} k
+ * @return {number[][]}
+ * 通过限制组合中的数字的出现顺序来去重
+ */
+var combine = function(n, k) {
+  if(n == 0 || k == 0){
+    return []
+  }
+
+  let ans = []
+  for(let i  = 1; i <= n - k + 1; i++){		// i<=n-k 剪枝
+    backtracking(n, k, [i], ans)
+  }
+  return ans
+};
+
+function backtracking(n, k, prev, ans){
+  if(prev.length == k){
+    ans.push([...prev])
+    return
+  }
+
+  let lastNum = prev[prev.length - 1]
+  if((n-lastNum) < k - prev.length){		// 剪枝
+    return 
+  }
+  for(let i = lastNum + 1; i <= n; i++){	// 只能从小到大
+    prev.push(i)
+    backtracking(n, k, prev, ans)
+    prev.pop()
+  }
+}
+~~~
+
+
+
