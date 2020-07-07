@@ -1,73 +1,52 @@
 /**
  * @param {character[][]} board
- * @return {void} Do not return anything, modify board in-place instead.
+ * @param {string} word
+ * @return {boolean}
  */
-class UnionFind {
-  constructor(){
-    this.f = new Map();
-  }
-
-  find = (x) => {   // 查找 x 的所归属的集合
-    if(!this.f.has(x)){
-      this.f.set(x, x)
-    }
-    if(this.f.get(x) != x){
-      this.f.set(x, this.find(this.f.get(x)))
-    }
-    return this.f.get(x)
-  }
-
-  union = (x, y) => {  // 合并集合
-    this.f.set(this.find(x), this.find(y))
-  }
-}
-
-var solve = function(board) {
-  if(!board || board.length == 0 || board[0].length == 0){
-    return 
+var exist = function(board, word) {
+  if(!board || board.length == 0 || board[0].length == 0 || word.length == 0){
+    return false
   }
 
   let m = board.length, n = board[0].length
-  let dummy = m * n
-  let unionFind = new UnionFind()
-
-  function cntIdx(i, j){
-    return i * n + j
+  let visited = []
+  for(let i = 0; i < m; i++){
+    visited.push(new Array(n).fill(0))
   }
 
   for(let i = 0; i < m; i++){
     for(let j = 0; j < n; j++){
-      if(board[i][j] != 'O'){
-        continue
-      }
-      let cur = cntIdx(i, j)
-      if(i == 0 || i == m - 1 || j == 0 || j == n - 1){
-        unionFind.union(cur, dummy)
-      }
-      for(let [x, y] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){
-        let tmpX = i + x, tmpY = j + y
-        if(tmpX >= 0 && tmpX < m && tmpY >= 0 && tmpY < n && board[tmpX][tmpY] == 'O'){
-          unionFind.union(cntIdx(tmpX, tmpY), cur)
-        }
+      if(backtracking(board, i, j, visited, 0, word)){
+        return true
       }
     }
   }
-
-  for(let i = 0; i < m; i++){
-    for(let j = 0; j < n; j++){
-      if(unionFind.find(cntIdx(i, j)) == unionFind.find(dummy)){
-        board[i][j] = 'O'
-      }else{
-        board[i][j] = 'X'
-      }
-    }
-  }
+  return false
 };
 
-let board= [
-  ["X","O","X","O","X","O"],
-  ["O","X","O","X","O","X"],
-  ["X","O","X","O","X","O"],
-  ["O","X","O","X","O","X"]]
-solve(board)
-console.log(board)
+function backtracking(board, x, y, visited, p, word){
+  if(x < 0 || x >= board.length || y < 0 || y >= board[0].length){
+    return false
+  }
+  if(visited[x][y] == 1 || p >= word.length || board[x][y] != word[p]){
+    return false
+  }
+  if(p == word.length - 1){
+    return true
+  }
+
+  visited[x][y] = 1
+  let m = board.length, n = board[0].length
+  let directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+  for(let [dx, dy] of directions){
+    let [tmpX, tmpY] = [x + dx, y + dy]
+    if(backtracking(board, tmpX, tmpY, visited, p+1, word)){
+      return true
+    }
+  }
+  visited[x][y] = 0
+  return false
+}
+
+console.log(exist([["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+,"ABCCED"))
