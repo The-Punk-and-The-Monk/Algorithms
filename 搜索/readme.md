@@ -943,3 +943,46 @@ function backtracking(n, k, prev, ans){
 
 
 
+### [39. 组合总和](https://leetcode-cn.com/problems/combination-sum/)
+
+可以对比题 [377. 组合总和 Ⅳ](https://leetcode-cn.com/problems/combination-sum-iv/)
+
+~~~javascript
+/**
+ * @param {number[]} candidates
+ * @param {number} target
+ * @return {number[][]}
+ */
+var combinationSum = function(candidates, target) {
+  if(!candidates || candidates.length == 0){
+    return []
+  }
+
+  candidates.sort((a, b) => a - b)			// 1
+  let ans = []
+  helper(candidates, 0, [], target, ans)
+  return ans
+};
+
+function helper(candidates, start, prev, target, ans){
+  if(target == 0){
+    ans.push([...prev])
+    return
+  }
+
+  if(target < candidates[start]){
+    return
+  }
+
+  for(let i = start; i < candidates.length; i++){			// 2
+    prev.push(candidates[i])
+    helper(candidates, i, prev, target - candidates[i], ans)
+    prev.pop()
+  }
+}
+~~~
+
+
+
+1, 2 两行结合, 达到了去重的效果, 
+
