@@ -986,3 +986,93 @@ function helper(candidates, start, prev, target, ans){
 
 1, 2 两行结合, 达到了去重的效果, 
 
+
+
+### [40. 组合总和 II](https://leetcode-cn.com/problems/combination-sum-ii/)
+
+
+
+~~~javascript
+/**
+ * @param {number[]} candidates
+ * @param {number} target
+ * @return {number[][]}
+ */
+var combinationSum2 = function(candidates, target) {
+  if(!candidates || candidates.length == 0){
+    return []
+  }
+
+  candidates.sort((a, b) => a - b)		// 1
+  const ans = []
+  const visited = new Array(candidates.length).fill(false)
+  helper(candidates, 0, [], target, ans, visited)
+  return ans 
+};
+
+function helper(candidates, start, prev, target, ans, visited){
+  if(target == 0){
+    ans.push(prev.slice(0))
+  }
+
+  if(candidates[start] > target){
+    return 
+  }
+
+  for(let i = start; i < candidates.length; i++){		// 2
+    if(i > 0 && candidates[i] == candidates[i-1] && visited[i-1] == false){		// 3 
+      continue
+    }
+    prev.push(candidates[i])
+    visited[i] = true
+    helper(candidates, i + 1, prev, target - candidates[i], ans, visited)
+    prev.pop()
+    visited[i] = false
+  }
+}
+~~~
+
+
+
+1, 2, 3, 起到了去重的作用
+
+
+
+### [216. 组合总和 III](https://leetcode-cn.com/problems/combination-sum-iii/)
+
+
+
+~~~javascript
+/**
+ * @param {number} k
+ * @param {number} n
+ * @return {number[][]}
+ */
+var combinationSum3 = function(k, n) {
+  if(k == 0 || n == 0){
+    return []
+  }
+
+  const ans = []
+  helper(k, n, [], 1, ans)
+  return ans
+};
+
+function helper(k, n, prev, start, ans){
+  if(n == 0 && prev.length == k){
+    ans.push(prev.slice(0))
+    return
+  }
+
+  if(start > n || n == 0 || prev.length >= k){
+    return 
+  }
+
+  for(let i = start; i < 10; i++){
+    prev.push(i)
+    helper(k, n - i, prev, i + 1, ans)
+    prev.pop()
+  }
+}
+~~~
+
