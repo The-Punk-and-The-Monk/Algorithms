@@ -812,7 +812,9 @@ function preOrder(root, prev, ans){
 
 
 
-### [46. 全排列](https://leetcode-cn.com/problems/permutations/)
+### 全排列
+
+####   [46. 全排列](https://leetcode-cn.com/problems/permutations/)
 
 
 
@@ -854,7 +856,7 @@ function backtracking(nums, prev, visited, ans){
 
 
 
-### [47. 全排列 II](https://leetcode-cn.com/problems/permutations-ii/)
+####  [47. 全排列 II](https://leetcode-cn.com/problems/permutations-ii/)
 
 引起结果重复是由于重复数字的排列引起的，如[1-1, 1-2, 1-3]的一个排列[1-2, 1-1, 1-3]
 
@@ -900,7 +902,11 @@ function backtracking(nums, visited, prev, ans){
 
 
 
-### [77. 组合](https://leetcode-cn.com/problems/combinations/)
+### 组合
+
+
+
+####  [77. 组合](https://leetcode-cn.com/problems/combinations/)
 
 
 
@@ -943,7 +949,7 @@ function backtracking(n, k, prev, ans){
 
 
 
-### [39. 组合总和](https://leetcode-cn.com/problems/combination-sum/)
+####  [39. 组合总和](https://leetcode-cn.com/problems/combination-sum/)
 
 可以对比题 [377. 组合总和 Ⅳ](https://leetcode-cn.com/problems/combination-sum-iv/)
 
@@ -988,7 +994,7 @@ function helper(candidates, start, prev, target, ans){
 
 
 
-### [40. 组合总和 II](https://leetcode-cn.com/problems/combination-sum-ii/)
+####  [40. 组合总和 II](https://leetcode-cn.com/problems/combination-sum-ii/)
 
 
 
@@ -1038,7 +1044,7 @@ function helper(candidates, start, prev, target, ans, visited){
 
 
 
-### [216. 组合总和 III](https://leetcode-cn.com/problems/combination-sum-iii/)
+####  [216. 组合总和 III](https://leetcode-cn.com/problems/combination-sum-iii/)
 
 
 
@@ -1076,3 +1082,93 @@ function helper(k, n, prev, start, ans){
 }
 ~~~
 
+
+
+### 子集
+
+
+
+#### [78. 子集](https://leetcode-cn.com/problems/subsets/)
+
+
+
+~~~javascript
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var subsets = function(nums) {
+  if(!nums || nums.length == 0){
+    return []
+  }
+
+  const ans = []
+  helper(nums, 0, [], ans)
+  return ans
+};
+
+function helper(nums, start, prev, ans){
+  ans.push(prev.slice(0))
+
+  for(let i = start; i < nums.length; i++){
+    prev.push(nums[i])
+    helper(nums, i+1, prev, ans)
+    prev.pop()
+  }
+}
+~~~
+
+
+
+#### [90. 子集 II](https://leetcode-cn.com/problems/subsets-ii/)
+
+
+
+~~~javascript
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var subsetsWithDup = function(nums) {
+  if(!nums || nums.length == 0){
+    return []
+  }
+  nums.sort((a, b) => a - b)
+  visited = new Array(nums.length).fill(false)
+  const ans = []
+  helper(nums, 0, [], visited, ans)
+  return ans
+};
+
+function helper(nums, start, prev, visited, ans){
+  ans.push(prev.slice(0))
+
+  for(let i = start; i < nums.length; i++){
+    if(i > 0 && nums[i] == nums[i-1] && visited[i-1] == false){
+      continue
+    }
+    visited[i] = true
+    prev.push(nums[i])
+    helper(nums, i+1, prev, visited, ans)
+    prev.pop()
+    visited[i] = false
+  }
+}
+~~~
+
+
+
+### 全排列, 组合, 子集的去重套路
+
+1. 在组合与子集中, 由于元素出现顺序没有要求, 所以相比于全排列多设置了 start 参数, 起到了去重作用
+
+2. 当有重复元素时, 重复的结果都是由于相同元素的不同排列引起的, 所以去重套路都一样
+
+   ~~~javascript
+   // 1
+   nums.sort()
+   //2 
+   if(i > 0 && nums[i] == nums[i-1] && visited[i-1] == false) continue
+   ~~~
+
+   
