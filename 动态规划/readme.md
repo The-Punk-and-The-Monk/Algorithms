@@ -4,7 +4,7 @@
 
 1. 将dp数组多初始化几位，如dp = [0] * (n + 1)，以处理 i=0 时dp[i-1]的情况
 2. 二维的dp数组有时候能优化为一维的， 如[矩阵最小路径和](#1.矩阵的最小路径和)
-3. 
+3. 遇到 字符串, dp[i] 一般表示以 i 位置为==结尾==的合法字符串的某个属性
 
 
 
@@ -1304,6 +1304,45 @@ var minSteps = function(n) {
         }
     }
     return dp[n]
+};
+~~~
+
+
+
+### [32. 最长有效括号](https://leetcode-cn.com/problems/longest-valid-parentheses/)
+
+以 dp[i] 表示以 i 结尾的最长合法子串长度则有
+
+1. s[i] == ‘(’ 则 dp[i] = 0
+2. 若s[i-1] == ‘(’  则 dp[i] = dp[i-2] + 2
+3. 若 s[i-1] == ‘)’ 且 s[i - dp[i - 1] - 1] == ‘(‘ , 则 dp[i] = dp[i-1] + dp[i - dp[i-1] - 2] + 2
+
+
+
+~~~javascript
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var longestValidParentheses = function(s) {
+  if(!s || s.length <= 1){
+    return 0
+  }
+
+  const dp = new Array(s.length + 1).fill(0)
+  let max = 0
+  for(let i = 2; i < s.length + 1; i++){
+    const si = i - 1
+    if(s[si] == ')'){
+      if(s[si - 1] == '('){
+        dp[i] = dp[i-2] + 2
+      }else if(s[si - dp[i-1] - 1] == '('){
+        dp[i] = dp[i-1] + dp[i - dp[i-1] - 2] + 2
+      }
+      max = Math.max(max, dp[i])
+    }
+  }
+  return max
 };
 ~~~
 
