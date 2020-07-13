@@ -108,7 +108,7 @@ var nextPermutation = function(nums) {
       if(nums[i] < nums[left]){
         break
       }
-      if(nums[i] > nums[left] && nums[i] < maxmin){
+      if(nums[i] > nums[left] && nums[i] <= maxmin){    // nums[i] <= maxmin 为了找到最右的
         maxmin = nums[i]
         maxminIdx = i
       }
@@ -120,7 +120,7 @@ var nextPermutation = function(nums) {
   }
 };
 
-const nums = [1,3,2]
+const nums = [2,3,1,3,3]
 // const nums = [1, 4, 6, 2, 4,2,1]
 nextPermutation(nums)
 console.log(nums)
