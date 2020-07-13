@@ -1,15 +1,16 @@
 /**
  * @param {number[]} nums
  * @return {number[][]}
+ * O(n**2)
  */
 var threeSum = function(nums) {
   if(!nums || nums.length < 3){
     return []
   }
-  nums.sort((a, b) => a - b)
+  nums.sort((a, b) => a - b)  // 为了去重
   const ans = []
   for(let i = 0; i < nums.length - 2; i++){
-    if(i > 0 && nums[i] == nums[i-1]) continue
+    if(i > 0 && nums[i] == nums[i-1]) continue    // 去重
     const tmp = helper(nums, -nums[i], i+1)
     if(tmp.length != 0){
       for(let [left, right] of tmp){
@@ -28,11 +29,11 @@ function helper(nums, target, start){
     if(curSum == target){
       ans.push([nums[left], nums[right]])
       left += 1
-      while(nums[left] == nums[left - 1]){
+      while(nums[left] == nums[left - 1]){    // 去重
         left += 1
       }
       right -= 1
-      while(nums[right] == nums[right + 1]){
+      while(nums[right] == nums[right + 1]){    // 去重
         right -= 1
       }
     }else {
