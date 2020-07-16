@@ -1171,4 +1171,9 @@ function helper(nums, start, prev, visited, ans){
    if(i > 0 && nums[i] == nums[i-1] && visited[i-1] == false) continue
    ~~~
 
-   
+
+
+### [131. 分割回文串](https://leetcode-cn.com/problems/palindrome-partitioning/)
+
+
+

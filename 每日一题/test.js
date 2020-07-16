@@ -1,52 +1,47 @@
 /**
- * @param {character[][]} board
- * @param {string} word
- * @return {boolean}
+ * @param {string} s
+ * @return {string}
  */
-var exist = function(board, word) {
-  if(!board || board.length == 0 || board[0].length == 0 || word.length == 0){
-    return false
+var longestPalindrome = function(s) {
+  if(!s || s.length == 0){
+    return ''
+  }
+  if(s.length == 1){
+    return s
   }
 
-  let m = board.length, n = board[0].length
-  let visited = []
-  for(let i = 0; i < m; i++){
-    visited.push(new Array(n).fill(0))
+  let sR = ''
+  for(let i = s.length - 1; i >= 0; i--){
+    sR += s[i]
   }
 
-  for(let i = 0; i < m; i++){
-    for(let j = 0; j < n; j++){
-      if(backtracking(board, i, j, visited, 0, word)){
-        return true
+  let max = helper(s, sR)
+  if(max[0] == 0){
+    return ''
+  }else{
+    return s.slice(max[1] - max[0] + 1, max[1]+1)
+  }
+};
+
+function helper(s1, s2){
+  const dp = []
+  for(let i = 0; i < s1.length + 1; i++){
+    dp.push(new Array(s2.length + 1).fill(0))
+  }
+
+  let max = [0, -1, -1]
+  for(let i = 1; i < s1.length + 1; i++){
+    for(let j = 1; j < s2.length + 1; j++){
+      const c1 = s1[i-1], c2 = s2[j - 1]
+      if(c1 == c2){
+        dp[i][j] = dp[i-1][j-1] + 1
+        if(dp[i][j] > max[0]){
+          max = [dp[i][j], i-1, j-1]
+        }
       }
     }
   }
-  return false
-};
-
-function backtracking(board, x, y, visited, p, word){
-  if(x < 0 || x >= board.length || y < 0 || y >= board[0].length){
-    return false
-  }
-  if(visited[x][y] == 1 || p >= word.length || board[x][y] != word[p]){
-    return false
-  }
-  if(p == word.length - 1){
-    return true
-  }
-
-  visited[x][y] = 1
-  let m = board.length, n = board[0].length
-  let directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
-  for(let [dx, dy] of directions){
-    let [tmpX, tmpY] = [x + dx, y + dy]
-    if(backtracking(board, tmpX, tmpY, visited, p+1, word)){
-      return true
-    }
-  }
-  visited[x][y] = 0
-  return false
+  return max
 }
 
-console.log(exist([["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
-,"ABCCED"))
+console.log(longestPalindrome("babaddaegeaddsssssddfggssff"))

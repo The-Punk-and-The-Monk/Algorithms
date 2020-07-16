@@ -843,6 +843,55 @@ dp[i][j] = dp[i-1][j-1] + 1 \qquad if \quad s[i] == s[j] \\
 ans = max(dp)
 $$
 
+## [5. 最长回文子串](https://leetcode-cn.com/problems/longest-palindromic-substring/)
+
+ 一个回文串, 去掉头尾还是回文串
+
+~~~javascript
+/**
+ * @param {string} s
+ * @return {string}
+ * 动态规划: O(n**2)
+ * 中心扩散: O(n**2)
+ * Manacher: O(n)
+ */
+var longestPalindrome = function(s) {
+  if(!s){
+    return ''
+  }
+
+  if(s.length == 1){
+    return s
+  }
+
+  const dp = []
+  for(let i = 0; i < s.length; i++){
+    dp.push([1])	// dp[i] 是个list, 存放所有以s[i] 结尾的回文子串的长度,
+  }
+  let maxLen = 1
+  let tail = 0
+  for(let i = 1; i < s.length; i++){
+    if(s[i] == s[i-1]){		// 特殊情况
+      dp[i].push(2)
+    }
+    for(let l of dp[i-1]){		// l for len
+      let idx = i - l - 1
+      if (idx >= 0 && s[i] == s[idx]){
+        dp[i].push(l + 2)		
+      }
+    }
+    const curMax = Math.max(...dp[i])
+    if(curMax > maxLen){
+      maxLen = curMax
+      tail = i
+    }
+  }
+  return s.slice(tail - maxLen + 1, tail + 1)
+}
+~~~
+
+
+
 
 
 ## 背包问题
