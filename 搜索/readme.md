@@ -1175,5 +1175,56 @@ function helper(nums, start, prev, visited, ans){
 
 ### [131. 分割回文串](https://leetcode-cn.com/problems/palindrome-partitioning/)
 
+~~~javascript
+/**
+ * @param {string} s
+ * @return {string[][]}
+ */
+var partition = function(s) {
+  if(!s){
+    return []
+  }
+
+  const map = findAllPalindrome(s)
+  const ans = []
+  backtracking(s, 0, [], ans, map)
+  return ans 
+};
+
+
+function backtracking(s, left, prev, ans, map){
+  if(left == s.length){
+    ans.push(prev.slice(0))
+    return
+  }
+
+  for(let right of map.get(left)){
+    prev.push(s.slice(left, right + 1))
+    backtracking(s, right+1, prev, ans, map)
+    prev.pop()
+  }
+}
+
+function findAllPalindrome(s){
+  const map = new Map()
+  for(let i = 0; i < s.length; i++){
+    kuoSan(s, i, i, map)
+    kuoSan(s, i, i+1, map)
+  }
+  return map
+}
+
+function kuoSan(s, left, right, map){
+  while(left >=0 && right < s.length && s[left] == s[right]){
+    if(!map.has(left)){
+      map.set(left, [])
+    }
+    map.get(left).push(right)
+    left -= 1
+    right += 1
+  }
+}
+~~~
+
 
 
