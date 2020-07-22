@@ -1395,3 +1395,40 @@ var longestValidParentheses = function(s) {
 };
 ~~~
 
+
+
+### [221. 最大正方形](https://leetcode-cn.com/problems/maximal-square/)
+
+https://leetcode-cn.com/problems/maximal-square/solution/li-jie-san-zhe-qu-zui-xiao-1-by-lzhlyle/
+
+![image.png](/Users/LinFeng/OneDrives/OneDrive/学习工作/Algorithms/动态规划/readme.assets/8c4bf78cf6396c40291e40c25d34ef56bd524313c2aa863f3a20c1f004f32ab0-image.png)
+
+~~~javascript
+/**
+ * @param {character[][]} matrix
+ * @return {number}
+ */
+var maximalSquare = function(matrix) {
+  if(!matrix || matrix.length === 0 || matrix[0].length === 0){
+    return 0
+  }
+
+  let maxSide = 0
+  const m = matrix.length, n = matrix[0].length
+  const dp = []
+  for(let i = 0; i < m + 1; i++){
+    dp.push(new Array(n + 1).fill(0))
+  }
+  for(let i = 1; i < m + 1; i++){
+    for(let j = 1; j < n + 1; j++){
+      if(matrix[i-1][j-1] == 1){
+        dp[i][j] = Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+        maxSide = Math.max(maxSide, dp[i][j])
+      }
+    }
+  }
+  return maxSide * maxSide
+};
+
+~~~
+
