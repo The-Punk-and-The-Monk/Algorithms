@@ -1228,3 +1228,127 @@ function kuoSan(s, left, right, map){
 
 
 
+
+
+### [37. 解数独](https://leetcode-cn.com/problems/sudoku-solver/)
+
+难点在于如何快速确定一个位置的可行数字
+
+解决方案:
+
+对每一行来说, 共9个数字, 所以可以用9位2进制来标记已经出现的数字,从右往左(方便移位, 跟1位与比较方便),  100000101, 代表1, 3, 9已经存在, 记为rows[i]
+
+对每一格来说, 它的禁忌就是 rows[i] | cols[j] | cells[(i // 3) * 3 + j // 3 + 1]
+
+```javascript
+/**
+ * @param {character[][]} board
+ * @return {void} Do not return anything, modify board in-place instead.
+ */
+var solveSudoku = function(board) {
+  const rows = new Array(9).fill(0)		// 共 9 行
+  const cells = new Array(9).fill(0)
+  const cols = new Array(9).fill(0)
+  const blank = []		// 记下空白格
+
+  for(let i = 0; i < 9; i++){
+    for(let j = 0; j < 9; j++){
+      if(board[i][j] != '.'){
+        const curCell = Math.floor(i / 3) * 3 + Math.floor(j/3) + 1
+        const tmp = 2 ** (board[i][j] - 1)		// board[i][j] = '8' -> tmp = 1000,0000 // 注: javascript有 '8' - 1 = 7
+        rows[i] = rows[i] | tmp
+        cols[j] = cols[j] | tmp
+        cells[curCell] |= tmp
+      }else{
+        blank.push([i, j])
+      }
+    }
+  }
+
+  backtracking(board, rows, cols, cells, blank)
+
+};
+
+const backtracking = (board, rows, cols, cells, blank) => {
+  if(blank.length == 0){		// 空白格都填上了
+    return true
+  }
+  const [i, j] = blank.pop()		// 取一个空白格
+  const curCell = Math.floor(i / 3) * 3 + Math.floor(j/3) + 1
+  let n = rows[i] | cols[j] | cells[curCell]		// 求出(i, j)的禁忌
+  for(let k = 1; k < 10; k++){
+    if((n & 1) == 0){		// 从右往左的原因, 如果从左往右, 难以确定最高位
+      board[i][j] = k + ''		// 题目要求填成字符串
+      const tmp = 2 ** (k - 1)
+      rows[i] = rows[i] | tmp
+      cols[j] = cols[j] | tmp
+      cells[curCell] |= tmp
+      if(backtracking(board, rows, cols, cells, blank)){
+        return true
+      }
+      rows[i] ^= tmp
+      cols[j] ^= tmp
+      cells[curCell] ^= tmp
+      board[i][j] = '.'
+    }
+    n = n >> 1
+  }
+  blank.push([i, j])
+  return false
+}
+```
+
+
+
+
+
+### [51. N皇后](https://leetcode-cn.com/problems/n-queens/)
+
+因为皇后可以按行列走, 也可以按对角线走, 跟解数独一样, 难点在于如何快速确定一个位置能不能放皇后
+
+解决方法:
+
+1. 行列: 简单, 每一行每一列只能放一个皇后
+2. 对角线: 对每条正对角线上(i, j) 有, i - j 为常数. 对每条斜对角线上有i+ j 为常数
+
+```javascript
+/**
+ * @param {number} n
+ * @return {string[][]}
+ */
+var solveNQueens = function(n) {
+  if(n == 0){
+    return [[]]
+  }
+
+  const ans = []
+  const dj = new Set() // 正对角线常数集合
+  const rdj = new Set() // reverse 对角线, 
+  const dp = new Array(n).fill('.')	// 记录下先前的皇后放在哪一列
+  backtracking(0, n, dp, [], dj, rdj, ans)
+  return ans 
+};
+
+const backtracking = (row, n, dp, curAns, dj, rdj, ans) => {		
+  if(row == n){
+    ans.push(curAns.slice(0))
+    return
+  }
+  for(let col = 0; col < n; col++){		// 遍历列, 找到可以放置皇后的位置
+    if(dp[col] == '.' && !dj.has(row - col) && !rdj.has(row + col)){
+      dp[col] = 'Q'
+      dj.add(row - col)
+      rdj.add(row + col)
+      const tmp = new Array(n).fill('.')
+      tmp[col] = 'Q'
+      curAns.push(tmp.join(""))
+      backtracking(row + 1, n, dp, curAns, dj, rdj, ans)		// 每次往下一行
+      curAns.pop()
+      rdj.delete(row + col)
+      dj.delete(row - col)
+      dp[col] = '.'
+    }
+  }
+}
+```
+
