@@ -1,0 +1,49 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Launch Program",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/run-ts.js",
+      "args": ["${file}"],
+      "sourceMaps": false
+    },
+    // {
+    //   "type": "node",
+    //   "request": "launch",
+    //   "name": "run curr ts",
+    //   "program": "${file}",
+    //   ""
+    //   "preLaunchTask": "rm -rf ${workspaceFolder}/ts-out/* && tsc ${file} --outfile ${workspaceFolder}/ts-out/test.js",
+    //   "outFiles": ["${workspaceFolder}/ts-out/test.js"]
+    // }
+    // {
+    //   "name": "Example",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "runtimeExecutable": "tsc",
+    //   "runtimeArgs": ["${file}", "--sourceMap", "true"],
+
+    //   // "args": ["${file}"],
+
+    //   "cwd": "${workspaceRoot}",
+    //   "internalConsoleOptions": "openOnSessionStart",
+    //   "skipFiles": ["<node_internals>/**", "node_modules/**"],
+    //   "sourceMaps": true
+    //   // "outFiles": ["${fileDirname}/${fileBasenameNoExtension}.js"]
+    //   // "program": "${fileDirname}/${fileBasenameNoExtension}.js",
+    // }
+    {
+      "name": "Launch ts",
+      "type": "pwa-node",
+      "request": "launch",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "args": ["${file}"]
+    }
+  ]
+}

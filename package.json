@@ -1,0 +1,30 @@
+{
+  "name": "algorithms",
+  "version": "1.0.0",
+  "description": "wahaha",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/The-Punk-and-The-Monk/Algorithms.git"
+  },
+  "author": "linfeng",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/The-Punk-and-The-Monk/Algorithms/issues"
+  },
+  "homepage": "https://github.com/The-Punk-and-The-Monk/Algorithms#readme",
+  "devDependencies": {
+    "typescript": "^4.3.4",
+    "@types/node": "^15.12.5",
+    "@types/typescript": "^2.0.0",
+    "ts-node": "^10.0.0",
+    "jest": "^26.0.1",
+    "jest-localstorage-mock": "^2.4.3",
+    "jest-serializer-html": "^7.0.0",
+    "jest-transform-stub": "^2.0.0",
+    "ts-jest": "^26.0.0",
+    "@types/jest": "^25.2.3"
+  },
+  "dependencies": {}
+}
