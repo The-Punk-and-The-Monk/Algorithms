@@ -1,3 +1,6 @@
 {
-  "recommendations": ["liamhammett.inline-parameters"]
+  "recommendations": [
+    "liamhammett.inline-parameters",
+    "LeetCode.vscode-leetcode"
+  ]
 }
