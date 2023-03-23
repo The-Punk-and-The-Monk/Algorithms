@@ -62,7 +62,7 @@ module.exports = {
     reporters: ['default'],
     // coverageReporters: ['json', 'lcov', 'text', 'clover'],
     defaultTestBaseInfo: {
-        author: 'markflin',
+        author: 'joey',
         priority: 'P0',
         casetype: 'unit',
     },
