@@ -1,9 +1,11 @@
+## [1657. Determine if Two Strings Are Close](https://leetcode.com/problems/determine-if-two-strings-are-close/description/)
+```typescript
 function closeStrings(word1: string, word2: string): boolean {
     if (word1.length !== word2.length) {
         return false
     }
-    const { charFrequency: charFrequencyOfWord1, charSet: charSet1 } = getCharFrequencyAscending(word1);
-    const { charFrequency: charFrequencyOfWord2, charSet: charSet2 } = getCharFrequencyAscending(word2);
+    const { charFrequency: charFrequencyOfWord1, charSet: charSet1 } = getCharFrequencyAscendingAndCharSet(word1);
+    const { charFrequency: charFrequencyOfWord2, charSet: charSet2 } = getCharFrequencyAscendingAndCharSet(word2);
     return isEqualArray(charFrequencyOfWord1, charFrequencyOfWord2) && isEqualSet(charSet1, charSet2)
 };
 
@@ -31,7 +33,7 @@ function isEqualSet(set1: Set<any>, set2: Set<any>) {
     return true
 }
 
-function getCharFrequencyAscending(word: string): { charFrequency: number[], charSet: Set<string> } {
+function getCharFrequencyAscendingAndCharSet(word: string): { charFrequency: number[], charSet: Set<string> } {
     const distribution: Record<string, number> = {};
     const charFrequencyArray = [];
     const charSet = new Set<string>();
@@ -51,3 +53,4 @@ function getCharFrequencyAscending(word: string): { charFrequency: number[], cha
         charSet
     };
 }
+```
