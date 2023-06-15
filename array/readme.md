@@ -61,6 +61,7 @@ class NumMatrix {
 ```
 
 # Difference
+this method suits for the scenario when you need to frequently add to or minus to each elements in a certain span of an array.
 ## [1094. Car Pooling](https://leetcode.com/problems/car-pooling/description/)
 ```typescript
 function carPooling(trips: number[][], capacity: number): boolean {

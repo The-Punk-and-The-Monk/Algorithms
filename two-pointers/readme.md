@@ -116,10 +116,93 @@ easy
 
 简述：判断链表是否存在环
 
-~~~
-# 快慢指针，一个指针走一步，一个指针走两步
+~~~typescript
+// 快慢指针，一个指针走一步，一个指针走两步
+function hasCycle(head: ListNode | null): boolean {
+    let slowPointer = head;
+    let fastPointer = head?.next;
+    while (slowPointer && fastPointer) {
+        if (slowPointer === fastPointer) {
+            return true
+        }
+        slowPointer = slowPointer?.next;
+        fastPointer = fastPointer?.next?.next;
+    }
+    return false;
+};
 ~~~
 
+## [142. Linked List Cycle II](https://leetcode.com/problems/linked-list-cycle-ii/description/)
+
+简述：判断链表是否存在环, 并找出环的节点
+
+~~~typescript
+// 快慢指针，一个指针走一步，一个指针走两步, 相遇后再重置慢指针到head, 利用快慢指针走过的步数可以得到一个等式.
+function detectCycle(head: ListNode | null): ListNode | null {
+    let slowPointer = head;
+    let fastPointer = head;
+    while (fastPointer && fastPointer.next) {
+        slowPointer = slowPointer.next
+        fastPointer = fastPointer.next.next
+        if (slowPointer === fastPointer) {
+            break;
+        }
+    }
+    if (!fastPointer?.next) {
+        return null
+    }
+    slowPointer = head;
+    while (slowPointer !== fastPointer) {
+        slowPointer = slowPointer.next;
+        fastPointer = fastPointer.next;
+    }
+    return slowPointer
+};
+~~~
+![图示](../assets/img/Screenshot%202023-06-13%20at%2008.46.00.png)
+
+## [160. Intersection of Two Linked Lists](https://leetcode.com/problems/intersection-of-two-linked-lists/description/)
+~~~typescript
+function getIntersectionNode(headA: ListNode | null, headB: ListNode | null): ListNode | null {
+    let j = headA;
+    let k = headB;
+    /**
+     * let's assume headA leads the longer one,
+     * when this loop terminates, k would be null, j would be X steps far from k
+     * and X is A.length - B.length
+     * 
+     */
+    while (j && k) {
+        j = j.next;
+        k = k.next;
+    }
+
+    /**
+     * now we can easily know which head leads to the longer list.
+     * we want i to point to that head.
+     * and by finishing pre traverse, i would be X steps far from the head.
+     */
+    let i = j ? headA : headB;
+    let l = j ? headB : headA;
+    while (j || k) {
+        j = j?.next;
+        k = k?.next;
+        i = i.next;
+    }
+
+    /**
+     * now i and l each lead a list with same length, I think the answer is pretty clear now
+     */
+    while (i && l) {
+        if (i === l) {
+            return i;
+        }
+        i = i.next;
+        l = l.next;
+    }
+    return null;
+};
+~~~
 
 
 ## 524. Longest Word in Dictionary through Deleting (Medium)
