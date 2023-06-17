@@ -38,59 +38,78 @@ class Heap<T> {
 
     private sinkOrSwim(index: number) {
         if (this.heapType === HeapTypes.MAX) {
-            this.swim(index)
+            return this.biggestGoesUp(index)
         }
-        this.sink(index)
+        return this.smallestGoesUp(index)
     }
 
     /**
      * smallest goes up
-     * bigger ones sink down
+     * bigger ones smallestGoesUp down
      * @param index 
      * @returns 
      */
-    private sink(index: number) {
+    private smallestGoesUp(index: number) {
+        if (index >= this.arr.length) {
+            return
+        }
         const leftChildIndex = this.leftChild(index);
         const rightChildIndex = this.rightChild(index)
         const currItem = this.arr[index]
         const leftChild = this.arr[leftChildIndex]
         const rightChild = this.arr[rightChildIndex]
-        const isParentBiggerThanLeftChild = leftChild ? this.compare(currItem, leftChild) : false;
-        const isParentBiggerThanRightChild = rightChild ? this.compare(currItem, rightChild) : false;
-        const isLeftChildBiggerThanRightChild = leftChild && rightChild ? this.compare(leftChild, rightChild) : false;
+        const isLeftChildExist = leftChild !== undefined;
+        const isRightChildExist = rightChild !== undefined;
+        const isParentBiggerThanLeftChild =  isLeftChildExist ? this.compare(currItem, leftChild) : false;
+        const isParentBiggerThanRightChild = isRightChildExist ? this.compare(currItem, rightChild) : false;
+        const isLeftChildBiggerThanRightChild = isLeftChildExist && isRightChildExist ? this.compare(leftChild, rightChild) : false;
         if (!(isParentBiggerThanLeftChild || isParentBiggerThanRightChild)) {
             return;
         }
-        if (isLeftChildBiggerThanRightChild) {
+        if (isLeftChildBiggerThanRightChild && rightChildIndex < this.arr.length) {
             this.swap(index, rightChildIndex)
+            this.smallestGoesUp(rightChildIndex)
             return
         }
-        this.swap(index, leftChildIndex)
+        if (!isLeftChildBiggerThanRightChild && leftChildIndex < this.arr.length) {
+            this.swap(index, leftChildIndex)
+            this.smallestGoesUp(leftChildIndex)
+        }
+        
     }
 
     /**
-     * biggest swim up
+     * biggest biggestGoesUp up
      * smaller ones go down
      * @param index 
      * @returns 
      */
-    private swim(index: number) {
+    private biggestGoesUp(index: number) {
+        if (index >= this.arr.length) {
+            return
+        }
         const leftChildIndex = this.leftChild(index);
         const rightChildIndex = this.rightChild(index)
         const parent = this.arr[index]
         const leftChild = this.arr[leftChildIndex]
         const rightChild = this.arr[rightChildIndex]
-        const isParentSmallerThanLeftChild = leftChild ? this.compare(leftChild, parent) : false;
-        const isParentSmallerThanRightChild = rightChild ? this.compare(rightChild, parent) : false;
-        const isLeftChildSmallerThanRightChild = leftChild && rightChild ? this.compare(rightChild, leftChild) : false;
+        const isLeftChildExist = leftChild !== undefined;
+        const isRightChildExist = rightChild !== undefined;
+        const isParentSmallerThanLeftChild = isLeftChildExist ? this.compare(leftChild, parent) : false;
+        const isParentSmallerThanRightChild = isRightChildExist ? this.compare(rightChild, parent) : false;
+        const isLeftChildSmallerThanRightChild = isLeftChildExist && isRightChildExist ? this.compare(rightChild, leftChild) : false;
         if (!(isParentSmallerThanLeftChild || isParentSmallerThanRightChild)) {
             return;
         }
-        if (isLeftChildSmallerThanRightChild) {
+        if (isLeftChildSmallerThanRightChild && rightChildIndex < this.arr.length) {
             this.swap(index, rightChildIndex)
+            this.biggestGoesUp(rightChildIndex)
             return
         }
-        this.swap(index, leftChildIndex)
+        if (!isLeftChildSmallerThanRightChild && leftChildIndex < this.arr.length) {
+            this.swap(index, leftChildIndex)
+            this.biggestGoesUp(leftChildIndex)
+        }
     }
 
     private swap(index1: number, index2: number) {
@@ -121,7 +140,9 @@ function sortArray(nums: number[]): number[] {
     const heap = new Heap<number>({
         arr: nums,
         heapType: HeapTypes.MIN,
-        compare: (a, b) => !!(a - b)
+        compare: (a, b) => {
+            return a > b
+        }
     })
     const newArr: number[] = [];
     let num = heap.pop();
@@ -129,8 +150,11 @@ function sortArray(nums: number[]): number[] {
         newArr.push(num)
         num = heap.pop();
     }
+    // newArr.reverse();
     return newArr;
 };
 
-const arr = [0, -1, 4, -9, 20, 0, -1, 6]
+const arr = [5,2,3,1]
 console.log(sortArray(arr))
+
+export {}
