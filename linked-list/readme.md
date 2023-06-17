@@ -1,3 +1,20 @@
+## [23. Merge k Sorted Lists](https://leetcode.com/problems/merge-k-sorted-lists/description/)
+
+```typescript
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+import { ListNode } from './typical-data-structures/list-node';
+
 export enum HeapTypes {
     MAX,
     MIN,
@@ -155,3 +172,31 @@ export class Heap<T> {
         return index * 2 + 2;
     }
 }
+
+function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
+    lists = lists.filter((node) => !!node);
+    const dummyNode = new ListNode(-1);
+    const heap = new Heap<ListNode>({
+        arr: lists as Array<ListNode>,
+        heapType: HeapTypes.MIN,
+        compare: (node1, node2) => node1.val > node2.val,
+    });
+
+    let tail = dummyNode;
+
+    while (heap.length) {
+        const p = heap.pop();
+        if (!p) {
+            continue;
+        }
+        const next = p.next;
+        p.next = null;
+        tail.next = p;
+        tail = tail.next;
+        if (next) {
+            heap.add(next);
+        }
+    }
+    return dummyNode.next;
+}
+```
