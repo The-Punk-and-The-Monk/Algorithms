@@ -200,3 +200,7 @@ function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
     return dummyNode.next;
 }
 ```
+
+142. Linked List Cycle II
+
+143. Intersection of Two Linked Lists
