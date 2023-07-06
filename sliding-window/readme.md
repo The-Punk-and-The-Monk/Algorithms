@@ -75,6 +75,59 @@ function countChars(s: string): Record<string, number> {
 }
 ```
 
+## 567
+
+```
+function checkInclusion(s1: string, s2: string): boolean {
+    const charCountOfS1 = countChars(s1);
+    const charCountOfWindow: Record<string, number> = {};
+    Object.entries(charCountOfS1).forEach(([char]) => {
+        charCountOfWindow[char] = 0;
+    });
+    const countOfNonDuplicatedCharOfS1 = Object.keys(charCountOfS1).length;
+    let validCharsCount = 0;
+    let l = 0;
+    let r = 0;
+
+    while (r < s2.length) {
+        const rc = s2[r];
+        r++;
+        if (charCountOfS1[rc]) {
+            charCountOfWindow[rc] += 1;
+            if (charCountOfWindow[rc] === charCountOfS1[rc]) {
+                validCharsCount++;
+            }
+        }
+
+        if (r - l >= s1.length) {
+            if (validCharsCount === countOfNonDuplicatedCharOfS1) {
+                return true;
+            }
+            const lc = s2[l];
+            l++;
+            if (charCountOfS1[lc]) {
+                if (charCountOfWindow[lc] === charCountOfS1[lc]) {
+                    validCharsCount--;
+                }
+                charCountOfWindow[lc] -= 1;
+            }
+        }
+    }
+    return false;
+}
+
+function countChars(s: string): Record<string, number> {
+    const charCount: Record<string, number> = {};
+    for (let c of s) {
+        if (!charCount[c]) {
+            charCount[c] = 0;
+        }
+        charCount[c] += 1;
+    }
+    return charCount;
+}
+```
+
 ## [1004. Max Consecutive Ones III](https://leetcode.com/problems/max-consecutive-ones-iii/description/)
 
 ### typical solution

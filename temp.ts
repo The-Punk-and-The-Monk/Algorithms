@@ -1,55 +1,30 @@
-function minWindow(s: string, t: string): string {
-    const charCountOfT = countChars(t);
-    const charCountOfWindow: Record<string, number> = {};
-    Object.entries(charCountOfT).forEach(([char]) => {
-        charCountOfWindow[char] = 0;
+function advantageCount(nums1: number[], nums2: number[]): number[] {
+    if (!nums1?.length || !nums2?.length || nums1.length !== nums2.length) {
+        return nums1;
+    }
+    const nums2WithIndex: { v: number; i: number }[] = [];
+    nums2.forEach((v, i) => {
+        nums2WithIndex.push({
+            v,
+            i,
+        });
     });
-    const countOfNonDuplicatedCharOfT = Object.keys(charCountOfT).length;
-    let validCharsCount = 0;
+    nums2WithIndex.sort((a, b) => b.v - a.v);
+    nums1.sort((a, b) => a - b);
     let l = 0;
-    let r = 0;
-    let minLen = Infinity;
-    let start = -1;
-
-    while (r < s.length) {
-        while (validCharsCount < countOfNonDuplicatedCharOfT && r < s.length) {
-            const rc = s[r];
-            r++;
-            if (charCountOfT[rc]) {
-                charCountOfWindow[rc] += 1;
-                if (charCountOfWindow[rc] === charCountOfT[rc]) {
-                    validCharsCount++;
-                }
-            }
-        }
-
-        while (validCharsCount === countOfNonDuplicatedCharOfT) {
-            const currLen = r - l;
-            if (currLen < minLen) {
-                minLen = currLen;
-                start = l;
-            }
-
-            const lc = s[l];
+    let r = nums1.length - 1;
+    const res = new Array(nums1.length).fill(-1);
+    for (let h of nums2WithIndex) {
+        const { v, i } = h;
+        if (nums1[r] > v) {
+            res[i] = nums1[r];
+            r--;
+        } else {
+            res[i] = nums1[l];
             l++;
-            if (charCountOfT[lc]) {
-                charCountOfWindow[lc] -= 1;
-                if (charCountOfWindow[lc] < charCountOfT[lc]) {
-                    validCharsCount--;
-                }
-            }
         }
     }
-    return start !== -1 ? s.substring(start, start + minLen) : '';
+    return res;
 }
 
-function countChars(s: string): Record<string, number> {
-    const charCount: Record<string, number> = {};
-    for (let c of s) {
-        if (!charCount[c]) {
-            charCount[c] = 0;
-        }
-        charCount[c] += 1;
-    }
-    return charCount;
-}
+console.log(advantageCount([12, 24, 8, 32], [13, 25, 32, 11]));
